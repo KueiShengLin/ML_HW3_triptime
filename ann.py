@@ -190,5 +190,6 @@ sess = tf.Session(config=tf.ConfigProto(
 
 sess.run(init)
 
-test()
+train()
+# test()
 #
