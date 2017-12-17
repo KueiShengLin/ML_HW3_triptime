@@ -1,0 +1,2 @@
+model_checkpoint_path: "/work/ML/HW3/ML_HW3_triptime/save/save.ckpt"
+all_model_checkpoint_paths: "/work/ML/HW3/ML_HW3_triptime/save/save.ckpt"
