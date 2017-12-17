@@ -1,0 +1,1 @@
+請自行到 kaggle 載 train.csv，然後執行 preprocess.py 生成資料集

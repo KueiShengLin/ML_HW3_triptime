@@ -1,0 +1,31 @@
+TRIP_ID: 這趟旅程的ID
+
+CALL_TYPE:	A:從中央出發
+			B:從計程車招呼站出發
+			C:其他(ex:隨機攔車)
+
+ORIGIN_CALL: 從中央出發的旅客手機(沒用)
+
+ORIGIN_STAND: 計程車招呼站ID (CALL_TYPE = B 才會有)
+
+TAXI_ID: 計程車ID
+
+TIMESTAMP: 起始時間
+
+DAYTYPE: B:特殊節日
+		 C:特殊節日的前一天
+		 A:其他日子
+		 
+MISSING_DATA: GPS有沒有少資料
+
+POLYLINE: GPS資料，[經度,緯度] 每15秒一次座標 第一個為起點 最後一個為終點
+		  train的GPS有完整的，test只有前面幾個
+		  
+旅途時間 = POLYLINE中的 data數 * 15，所以經緯度根本在唬洨我????????????????????????????
+
+在testing data 中只會給你前幾次gps的值，要你推估出總旅途時間。
+
+============================================================================================================================
+我最後選用的 feature: CALL_TYPE, DAYTYPE, TIME(分成上班、下班、凌晨、其他), total distance, 前5個 gps 所行走的距離 5個
+		  
+
