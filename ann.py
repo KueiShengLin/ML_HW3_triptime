@@ -101,7 +101,7 @@ def add_layer(inputs, input_tensors, output_tensors, activation_function=None):
 
 
 def train():
-    for iteration, train_data in enumerate(pd.read_csv("./dataset2/pre_train.csv", iterator=True, chunksize=1)):
+    for iteration, train_data in enumerate(pd.read_csv("./trip_data/pre_train.csv", iterator=True, chunksize=1)):
         x_train, y_train = pre_train(train_data)
         _, cost, prediction = sess.run([train_op, loss, output_layer], feed_dict={x_feeds: x_train, y_feeds: y_train})
         if iteration % 1000 == 0:
@@ -119,32 +119,35 @@ def train():
 def test():
     saver = tf.train.Saver()
     saver.restore(sess, "/work/ML/HW3/ML_HW3_triptime/save/save.ckpt")
-    test_data = pd.read_csv("./dataset2/pre_test.csv")
-    x_test, y_test = pre_train(test_data)
-    prediction = sess.run([output_layer], feed_dict={x_feeds: x_test, y_feeds: y_test})
-    score_list = []
-    score_list.append(score(prediction, y_test, 0))
-    score_list.append(score(prediction, y_test, 30))
-    score_list.append(score(prediction, y_test, 60))
-    score_list.append(score(prediction, y_test, 100))
-    score_list.append(score(prediction, y_test, 150))
-    score_list.append(score(prediction, y_test, 200))
-    score_list.append(score(prediction, y_test, 300))
+    score_list = [0]*7
+    a = 0
+    for iteration, test_data in enumerate(pd.read_csv("./trip_data/pre_test.csv", iterator=True, chunksize=1)):
+        a += 1
+        x_test, y_test = pre_train(test_data)
+        prediction = sess.run([output_layer], feed_dict={x_feeds: x_test, y_feeds: y_test})
+        prediction = int(round(prediction[0][0][0]))
+        y_test = y_test[0][0]
+        score_list[0] += (score(prediction, y_test, 0))
+        score_list[1] += (score(prediction, y_test, 30))
+        score_list[2] += (score(prediction, y_test, 60))
+        score_list[3] += (score(prediction, y_test, 100))
+        score_list[4] += (score(prediction, y_test, 150))
+        score_list[5] += (score(prediction, y_test, 200))
+        score_list[6] += (score(prediction, y_test, 300))
+        if iteration % 1000 == 0:
+            print(a)
+            # print(prediction, y_test)
+            print(score_list)
+    score_list = [i / a for i in score_list]
     print(score_list)
     np.savetxt('./training/ann_acc' + '.txt', score_list, delimiter=',')
 
-    # for iteration, test_data in enumerate(pd.read_csv("./dataset2/pre_test.csv", iterator=True, chunksize=1)):
-    #     x_test, y_test = pre_train(test_data)
-    #     prediction = sess.run([output_layer], feed_dict={x_feeds: x_test, y_feeds: y_test})
-    #     prediction = round(prediction[0][0][0])
-
-
 def score(prediction, y_hat, tol):
-    acc = 0
-    for pid, y in enumerate(prediction):
-        if y_hat[pid] in range(y-tol, y+tol, 1):
-            acc += 1
-    return acc / len(y_hat)
+
+    if y_hat in range(prediction-tol, prediction+tol, 1):
+        return 1
+    else:
+        return 0
 
 
 INPUT = 16
@@ -190,6 +193,6 @@ sess = tf.Session(config=tf.ConfigProto(
 
 sess.run(init)
 
-train()
-# test()
+# train
+test()
 #
